@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
     role = models.CharField(
         max_length=20,
         choices=[
@@ -10,8 +11,10 @@ class User(AbstractUser):
             ('admin', 'Administrator'),
         ]
     )
+    
     organization = models.CharField(max_length=255, null=True, blank=True)
     office = models.CharField(max_length=255, null=True, blank=True)
+
     
 class FormRegistration(models.Model):
     STATUS_CHOICES = [
@@ -21,7 +24,6 @@ class FormRegistration(models.Model):
     ]
     event_name = models.CharField(max_length=200)
     contact_person = models.CharField(max_length=100)
-    academic_year = models.CharField(max_length=20)
     event_date = models.DateField(max_length=10)
     attach_document = models.FileField(upload_to='documents/')
     status_osa = models.CharField(max_length=3, choices=STATUS_CHOICES, default='NS')

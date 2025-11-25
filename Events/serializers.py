@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import FormRegistration, User
+from . models import FormRegistration, User, Organization
 from django.contrib.auth.hashers import make_password
 
 class FormRegistrationSerializer(serializers.ModelSerializer):

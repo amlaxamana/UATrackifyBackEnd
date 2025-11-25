@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from Form import settings
 # Create your models here.
 
 class User(AbstractUser):
@@ -11,12 +13,31 @@ class User(AbstractUser):
             ('admin', 'Administrator'),
         ]
     )
-    
-    organization = models.CharField(max_length=255, null=True, blank=True)
+
     office = models.CharField(max_length=255, null=True, blank=True)
+
+class Organization(models.Model):
+
+        OrganizationName_Choices = [
+        ('SSITE', 'SSITE'),
+        ('UASAO', 'UASAO'),
+        ('MCSA', 'MCSA'),
+    ]
+        OrganizationName = models.CharField(max_length=255, choices= OrganizationName_Choices, null=True, blank=True)
+
+    
 
     
 class FormRegistration(models.Model):
+    OrganizationName = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE, # ⬅️ Changed from SET_NULL to CASCADE
+        null=True, # Note: null=True is usually incompatible with CASCADE on a required field, 
+                   # but kept here as it was in the previous code.
+        blank=True,
+        related_name='events'
+    )
+
     STATUS_CHOICES = [
         ('C', 'Completed'),
         ('NS', 'Not Started'),

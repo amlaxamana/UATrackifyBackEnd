@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Events',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 

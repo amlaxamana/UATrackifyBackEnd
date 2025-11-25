@@ -1,11 +1,13 @@
 from django.shortcuts import render
 
 # Create your views here.
-from . models import FormRegistration, User
+from . models import FormRegistration, User, Organization
 from . serializers import FormRegistrationSerializer, UserSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 @api_view(['POST'])
 def register_event(request):
@@ -60,3 +62,33 @@ def user_detail(request, pk):
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def student_dashboard(request):
+    user = request.user
+    
+    # 🌟 CRITICAL CHECK: Ensure user is linked to an organization before proceeding
+    if not user.organization:
+        # Return a specific error instead of crashing with 500
+        return Response({"error": "User profile must have an organization linked."}, 
+                        status=status.HTTP_400_BAD_REQUEST) 
+    
+    # ... rest of your code ...
+
+    # POST Logic:
+    if request.method == 'POST':
+        serializer = FormRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            # Pass the validated Organization object to the save method
+            serializer.save(organization=user.organization) 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # ...
+
+    # GET Logic:
+    elif request.method == 'GET':
+        # Now this filter is safe because we checked user.organization is not None
+        events = FormRegistration.objects.filter(organization=user.organization).order_by('-event_date')
+        # ...
+    

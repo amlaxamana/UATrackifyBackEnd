@@ -9,10 +9,14 @@ class FormRegistrationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class UserSerializer(serializers.ModelSerializer):
+    organization = serializers.SlugRelatedField(
+        queryset=Organization.objects.all(),
+        slug_field='OrganizationName'
+    )
+
     class Meta:
         model = User
-        # removed "organization" from fields for now. To be added later.
-        fields = ['id', 'username','email', 'password', 'first_name', 'last_name', 'role', 'office']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'role', 'office', 'organization']
         extra_kwargs = {
             'email': {'required': True},
             'password': {'write_only': True}

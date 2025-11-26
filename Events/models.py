@@ -16,6 +16,13 @@ class User(AbstractUser):
 
     office = models.CharField(max_length=255, null=True, blank=True)
 
+    organization = models.ForeignKey(
+        'Organization',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
 class Organization(models.Model):
 
         OrganizationName_Choices = [
@@ -24,6 +31,8 @@ class Organization(models.Model):
         ('MCSA', 'MCSA'),
     ]
         OrganizationName = models.CharField(max_length=255, choices= OrganizationName_Choices, null=True, blank=True)
+        def __str__(self):
+            return self.OrganizationName
 
     
 

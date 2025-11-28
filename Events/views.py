@@ -85,7 +85,7 @@ def student_dashboard(request):
         serializer = FormRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             # Pass the validated Organization object to the save method
-            serializer.save(OrganizationName=user.organization)
+            serializer.save(organization=user.organization)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # ...
 

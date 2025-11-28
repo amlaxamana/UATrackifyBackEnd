@@ -2,36 +2,6 @@ from rest_framework import serializers
 from . models import FormRegistration, User, Organization
 from django.contrib.auth.hashers import make_password
 
-class FormRegistrationSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = FormRegistration
-        fields = '__all__'
-        
-class UserSerializer(serializers.ModelSerializer):
-    organization = serializers.SlugRelatedField(
-        queryset=Organization.objects.all(),
-        slug_field='OrganizationName'
-    )
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'role', 'office', 'organization']
-        extra_kwargs = {
-            'email': {'required': True},
-            'password': {'write_only': True}
-        }
-
-    def create(self, validated_data):
-        role = validated_data.get('role')
-        if role == 'admin':
-            validated_data['is_staff'] = True
-        validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
-from rest_framework import serializers
-from . models import FormRegistration, User, Organization
-from django.contrib.auth.hashers import make_password
-
 
 class FormRegistrationSerializer(serializers.ModelSerializer):
     organization = serializers.SlugRelatedField(

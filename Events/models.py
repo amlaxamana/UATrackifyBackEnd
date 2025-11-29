@@ -22,6 +22,8 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    def __str__(self):
+         return f"{self.first_name} {self.last_name} - {self.role}"
 
 class Organization(models.Model):
 
@@ -29,8 +31,28 @@ class Organization(models.Model):
         ('SSITE', 'SSITE'),
         ('UASAO', 'UASAO'),
         ('MCSA', 'MCSA'),
+        ('JPIA', 'JPIA'),
+        ('LTSP', 'LTSP'),
+        ('BHS-PHS', 'BHS-PHS'),
+        ('NSC', 'NSC'),
+        ('JPPhA', 'JPPhA'),
+        ('CRCYC', 'CRCYC'),
+        ('CDW', 'CDW'),
+        ('BATAS', 'BATAS'),
+        ('CREATE', 'CREATE'),
+        ('PICE', 'PICE'),
+        ('AAA', 'AAA'),
+        ('PIIE', 'PIIE'),
+        ('BACC', 'BACC'),
+        ('PSYCHSOC', 'PSYCHSOC'),
+        ('LEAD', 'LEAD'),
+        ('CHARMS', 'CHARMS'),
+        ('ICpEP.se', 'ICpEP.se'),
+        ('INA', 'INA'),
+        ('UACSC', 'UACSC'),
+
     ]
-        OrganizationName = models.CharField(max_length=255, choices= OrganizationName_Choices, null=True, blank=True)
+        OrganizationName = models.CharField(max_length=255, choices= OrganizationName_Choices, null=True, blank=True, unique=True)
         def __str__(self):
             return self.OrganizationName
 
@@ -38,7 +60,7 @@ class Organization(models.Model):
 
     
 class FormRegistration(models.Model):
-    OrganizationName = models.ForeignKey(
+    organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE, # ⬅️ Changed from SET_NULL to CASCADE
         null=True, # Note: null=True is usually incompatible with CASCADE on a required field, 

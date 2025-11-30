@@ -71,22 +71,24 @@ def user_detail(request, pk):
 #EDIT FORMS
 
 @csrf_exempt
-@api_view(['PUT'])
+@api_view(['GET', 'PUT'])
 def edit_form(request, pk):
     try:
         form = FormRegistration.objects.get(pk=pk)
     except FormRegistration.DoesNotExist:
         return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = FormRegistrationSerializer(instance=form, data=request.data)
-    
-    if serializer.is_valid():
-        serializer.save()
+    if request.method == 'GET':
+        serializer = FormRegistrationSerializer(form)
         return Response(serializer.data)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-   
+
+    elif request.method == 'PUT':
+        # partial=True allows updates without requiring all fields
+        serializer = FormRegistrationSerializer(instance=form, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

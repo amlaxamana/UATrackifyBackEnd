@@ -12,6 +12,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import permission_classes
+from django.views.decorators.csrf import csrf_exempt
 
 @api_view(['POST'])
 def register_event(request):
@@ -68,6 +69,8 @@ def user_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
  
 #EDIT FORMS
+
+@csrf_exempt
 @api_view(['PUT'])
 def edit_form(request, pk):
     try:
@@ -136,6 +139,7 @@ class EmailAuthToken(ObtainAuthToken):
             "email": user.email,
             "role": user.role,
             "name": f"{user.first_name} {user.last_name}",
-            "organization": user.organization.OrganizationName if user.organization else None
+            "organization": user.organization.OrganizationName if user.organization else None,
+            "office": user.office
         })
     

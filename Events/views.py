@@ -116,6 +116,8 @@ class EmailAuthToken(ObtainAuthToken):
             "token": token.key,
             "user_id": user.id,
             "email": user.email,
-            "role": user.role
+            "role": user.role,
+            "name": f"{user.first_name} {user.last_name}",
+            "organization": user.organization.OrganizationName if user.organization else None
         })
     

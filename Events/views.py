@@ -80,7 +80,7 @@ def user_detail(request, pk):
 #EDIT FORMS
 
 @csrf_exempt
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def edit_form(request, pk):
     try:
         form = FormRegistration.objects.get(pk=pk)
@@ -98,6 +98,10 @@ def edit_form(request, pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        form.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

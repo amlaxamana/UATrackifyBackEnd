@@ -19,73 +19,79 @@ class UserSerializer(serializers.ModelSerializer):
     organization = serializers.SlugRelatedField(
         queryset=Organization.objects.all(),
         slug_field='OrganizationName',
-        required=False, 
+        required=False,
     )
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'role', 'office', 'organization']
+        fields = [
+            'id', 'username', 'email', 'password', 'first_name', 'last_name',
+            'role', 'office', 'organization'
+        ]
         extra_kwargs = {
-            'email': {'required': True},
             'password': {'write_only': True},
-            'office': {'required': False}, 
+            'email': {'required': True},
         }
 
-    # 🎯 ADDED: Conditional Validation Logic
     def validate(self, data):
         role = data.get('role')
-        organization = data.get('organization') # This is the object instance if lookup succeeded, or None/string if not.
-        office = data.get('office') # This is the string value
+        organization = data.get('organization')
+        office = data.get('office')
 
         if role == 'admin':
-            # 1. Enforce Office requirement for Admin (office field cannot be empty string or None)
             if not office or office.strip() == "":
-                raise serializers.ValidationError({
-                    'office': 'The office field is required for Administrator roles.'
-                })
-            
-            # 2. Prevent Organization for Admin
+                raise serializers.ValidationError({'office': 'Office is required for admins.'})
             if organization:
-                raise serializers.ValidationError({
-                    'organization': 'Organization must be left empty for Administrator roles.'
-                })
+                raise serializers.ValidationError({'organization': 'Admin cannot belong to an organization.'})
 
         elif role == 'student':
-            # 1. Enforce Organization requirement for Student (organization must be provided)
             if not organization:
-                raise serializers.ValidationError({
-                    'organization': 'The organization field is required for Student roles.'
-                })
-            
-            # 2. Prevent Office for Student
+                raise serializers.ValidationError({'organization': 'Organization is required for students.'})
             if office and office.strip() != "":
-                 raise serializers.ValidationError({
-                    'office': 'Office must be left empty for Student roles.'
-                })
-
+                raise serializers.ValidationError({'office': 'Students cannot have an office.'})
         return data
-    
-    # Custom create method (left untouched as requested)
+
     def create(self, validated_data):
-        # 💡 FIX 1: Extract the organization object before manipulating validated_data
-        organization_instance = validated_data.pop('organization', None) 
-        
+        organization_instance = validated_data.pop('organization', None)
         role = validated_data.get('role')
-        if role == 'administrator':
+
+        # Always hash the password
+        password = validated_data.pop('password')
+        hashed_password = make_password(password)
+        validated_data['password'] = hashed_password
+
+        # Set permissions
+        if role == 'admin':
             validated_data['is_staff'] = True
             validated_data['is_superuser'] = True
-            
-        validated_data['password'] = make_password(validated_data['password'])
-        
-        # Create the user without the organization field initially
-        user = super().create(validated_data) 
-        
-        # 💡 FIX 2: Manually set and save the organization object onto the user
+            validated_data['is_active'] = True
+        else:
+            validated_data['is_staff'] = False
+            validated_data['is_superuser'] = False
+            validated_data['is_active'] = True
+
+        user = super().create(validated_data)
+
         if organization_instance:
             user.organization = organization_instance
             user.save()
-            
+
         return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        if password:
+            instance.password = make_password(password)
+
+        organization_instance = validated_data.pop('organization', None)
+        if organization_instance is not None:
+            instance.organization = organization_instance
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:

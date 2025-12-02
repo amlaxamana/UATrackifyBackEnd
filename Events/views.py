@@ -3,7 +3,7 @@ from urllib3 import request
 
 # Create your views here.
 from . models import FormRegistration, User, Organization
-from . serializers import FormRegistrationSerializer, UserSerializer
+from . serializers import FormRegistrationSerializer, UserSerializer, OrganizationSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,6 +13,9 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import permission_classes
 from django.views.decorators.csrf import csrf_exempt
+from django.http import FileResponse
+from django.conf import settings
+import os
 
 @api_view(['POST'])
 def register_event(request):
@@ -41,6 +44,12 @@ def list_users(request):
 def list_events(request):
     events = FormRegistration.objects.all()
     serializer = FormRegistrationSerializer(events, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def list_organizations(request):
+    organizations = Organization.objects.all()
+    serializer = OrganizationSerializer(organizations, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -143,3 +152,12 @@ class EmailAuthToken(ObtainAuthToken):
             "office": user.office
         })
     
+@api_view(['GET'])
+def download_file(request, file_name):
+    file_path = os.path.join(settings.BASE_DIR, 'documents' ,file_name)  # Update this path
+
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        return response
+    return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)

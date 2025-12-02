@@ -12,6 +12,7 @@ class FormRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = FormRegistration
         fields = '__all__'
+        read_only_fields = ['date_added'] 
         
 
 class UserSerializer(serializers.ModelSerializer):
@@ -85,3 +86,8 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
             
         return user
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = ['id', 'OrganizationName']

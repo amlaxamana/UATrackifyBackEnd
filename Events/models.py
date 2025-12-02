@@ -87,6 +87,7 @@ class FormRegistration(models.Model):
     status_vpa = models.CharField(max_length=3, choices=STATUS_CHOICES, default='NS')
     vpa_note = models.CharField(max_length=200, blank=True, null=True)
     remarks = models.CharField(max_length=300 , blank=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"{self.event_name} {self.contact_person}"

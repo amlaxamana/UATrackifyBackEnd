@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-7w9jma9eurq)$w(uhk!s)#x711*y01w8$0(ze5ehkt=@)$4las
 DEBUG = True
 
 ALLOWED_HOSTS = [
-
+    'https://uatrackifybackend.onrender.com', 'uatrackifybackend.onrender.com'
 ]
 
 
@@ -64,12 +64,13 @@ ROOT_URLCONF = 'Form.urls'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# settings.py
+settings.py
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:8081",
-#     "http://127.0.0.1:8081",  # optional, just in case
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8081",
+    "https://uatrackifybackend.onrender.com",
+    "uatrackifybackend.onrender.com",
+]
 
 AUTH_USER_MODEL = 'Events.User'
 

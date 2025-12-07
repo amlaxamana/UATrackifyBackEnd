@@ -64,8 +64,6 @@ ROOT_URLCONF = 'Form.urls'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-settings.py
-
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8081",
     "https://uatrackifybackend.onrender.com",

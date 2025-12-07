@@ -67,7 +67,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8081",
     "https://uatrackifybackend.onrender.com",
-    "uatrackifybackend.onrender.com",
 ]
 
 AUTH_USER_MODEL = 'Events.User'

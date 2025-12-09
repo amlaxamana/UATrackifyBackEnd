@@ -11,5 +11,5 @@ methods.
 
 Snack LIVE URL: https://snack.expo.dev/@bernburn/uatrackify?platform=web
   
-Render LIVE URL: https://uatrackifybackend.onrender.com/
+Render LIVE URL: https://uatrackifybackend.onrender.com/admin/
   
